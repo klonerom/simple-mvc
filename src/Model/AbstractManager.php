@@ -63,6 +63,24 @@ abstract class AbstractManager
     }
 
     /**
+     * Get all rows from database by ID.
+     *
+     * @param  int $id
+     *
+     * @return array
+     */
+    public function selectAllById(int $id)
+    {
+        // prepared request
+        $statement = $this->pdoConnection->prepare("SELECT * FROM $this->table WHERE item_id=:id");
+        $statement->setFetchMode(\PDO::FETCH_CLASS, $this->className);
+        $statement->bindValue('id', $id, \PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
+    /**
      * DELETE on row in dataase by ID
      *
      * @param int $id
@@ -87,6 +105,15 @@ abstract class AbstractManager
             //echo "INSERT INTO $this->table (title) VALUES (:title)";
             $statement = $this->pdoConnection->prepare("INSERT INTO $this->table (title) VALUES (:title)");
             $statement->bindValue('title', $data['title'], \PDO::PARAM_STR);
+            $statement->execute();
+        }
+        if (isset($data['comment'])) {
+            //echo "INSERT INTO $this->table (item_id, author, comment, created_at) VALUES (".$data['itemId'].", ".$data['author'].", ".$data['comment'].", ".$data['createdAt'].")";
+            $statement = $this->pdoConnection->prepare("INSERT INTO $this->table (item_id, author, comment, created_at) VALUES (:item_id, :author, :comment, :created_at)");
+            $statement->bindValue('item_id', $data['itemId'], \PDO::PARAM_INT);
+            $statement->bindValue('author', $data['author'], \PDO::PARAM_STR);
+            $statement->bindValue('comment', $data['comment'], \PDO::PARAM_STR);
+            $statement->bindValue('created_at', $data['createdAt'], \PDO::PARAM_STR);
             $statement->execute();
         }
     }

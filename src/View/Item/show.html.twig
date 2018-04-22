@@ -8,10 +8,30 @@
 
     <p>{{ item.id }}. {{ item.title }}</p>
     <a href="/item/edit/{{ item.id }}">Edit</a>
-    <form   action ="" method="POST">
+    <form action ="" method="POST">
         <input type="hidden" name="itemId"  value="{{ item.id }}" >
         <input type="hidden" name="itemTitle"  value="{{ item.title }}" >
-        <button type="submit" value="delete">Delete</button>
+        <button type="submit" name="submitDelete">Delete</button>
     </form>
+<h2>Comments</h2>
+    <h3>New comment</h3>
+    <form action ="" method="POST">
+    <label for="author">Auteur</label>
+    <input type="text" name="author">
+    <label for="comment">Commentaire</label>
+    <textarea type="text" name="comment"></textarea>
+        <button type="submit" name="submitComment">Envoyer</button>
+    </form>
+
+    <h3>Comments list</h3>
+    {% for comment in comments %}
+        <li>id - {{ comment.id }} - Author : {{ comment.author }} - Created at : {{ comment.createdAt }}</p>
+            <p>Comment : {{ comment.comment }}</p>
+        </li>
+    {% else %}
+        <li>Nothing to display</li>
+    {% endfor %}
+
+
     <a href="/">Back</a>
 {% endblock %}

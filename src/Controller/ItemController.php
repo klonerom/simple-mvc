@@ -9,6 +9,7 @@
 
 namespace Controller;
 
+use Model\CommentManager;
 use Model\Item;
 use Model\ItemManager;
 
@@ -54,8 +55,7 @@ class ItemController extends AbstractController
 
         $itemManager = new ItemManager();
         $item = $itemManager->selectOneById($id);
-
-        if (isset($_POST)) {//Delete case
+        if (isset($_POST['submitDelete'])) {//Delete case
             if (isset($_POST['itemId'])) {
 
                 $id = (int) $_POST['itemId']; //int to delete method
@@ -68,11 +68,41 @@ class ItemController extends AbstractController
                     $message = 'La suppression n\'est pas possible : incohérence d\'id !';
                 }
             }
+
         }
+
+        if (isset($_POST['submitComment'])) {//add comment
+            $datas = [];
+
+            //eAdd comment in db
+            if (isset($_POST['author']) && isset($_POST['comment'])) {
+                $dateNow = new \DateTime();
+                $createdAt = $dateNow->format('Y-m-d H:i:s');
+
+                $datas = [
+                    'itemId' => $id,
+                    'author' => $_POST['author'],
+                    'comment' => $_POST['comment'],
+                    'createdAt' => $createdAt,
+                ];
+
+                $CommentManager = new CommentManager();
+                $CommentManager->insert($datas);
+
+                $_SESSION['message'] = 'Création du commentaire de' . $datas['author'] . ' !';
+                header('Location: /item/' . $id);
+                die;
+            }
+        }
+
+        //List comment
+        $commentManager = new CommentManager();
+        $comments = $commentManager->selectAllById($id);
 
         return $this->twig->render('Item/show.html.twig', [
             'item' => $item,
             'message' => $message,
+            'comments' => $comments,
             ]);
     }
 
