@@ -13,25 +13,36 @@
         <input type="hidden" name="itemTitle"  value="{{ item.title }}" >
         <button type="submit" name="submitDelete">Delete</button>
     </form>
+    <a href="/">Back</a>
+
 <h2>Comments</h2>
     <h3>New comment</h3>
-    <form action ="" method="POST">
-    <label for="author">Auteur</label>
-    <input type="text" name="author">
-    <label for="comment">Commentaire</label>
-    <textarea type="text" name="comment"></textarea>
-        <button type="submit" name="submitComment">Envoyer</button>
-    </form>
+        <form action ="" method="POST">
+        <label for="author">Auteur</label>
+        <input type="text" name="author" id="author" value="{{ commentUpd.author }}"><br />
+        <label for="comment">Commentaire</label>
+        <textarea type="text" name="comment" rows="5" id="comment">{{ commentUpd.comment }}</textarea><br />
+        <input type="hidden" name="commentId" id="commentId" value="{{ commentUpd.id }}"><br />
+        <input type="hidden" name="createdAt" id="createdAt" value="{{ commentUpd.createdAt }}"><br />
+
+        {% if commentUpd.id %}
+            <button type="submit" name="submitCommentUpdate">Modifier</button>
+        {%  else %}
+            <button type="submit" name="submitComment">Envoyer</button>
+        {%  endif %}
+        </form>
 
     <h3>Comments list</h3>
-    {% for comment in comments %}
-        <li>id - {{ comment.id }} - Author : {{ comment.author }} - Created at : {{ comment.createdAt }}</p>
-            <p>Comment : {{ comment.comment }}</p>
-        </li>
-    {% else %}
-        <li>Nothing to display</li>
-    {% endfor %}
+        {% for comment in comments %}
+            <li>
+                id : {{ comment.id }} - Author : {{ comment.author }} - Created at : {{ comment.createdAtFormat }} - Updated at : {{ comment.updatedAtFormat }} - Comment : {{ comment.comment }}
+                <a href="/item/{{ item.id }}?IdCommentToUpdate={{ comment.id }}" >Modifier</a>
+                <a href="/item/{{ item.id }}?IdCommentToDelete={{ comment.id }}" >Supprimer</a>
+            </li>
+        {% else %}
+            <li>Nothing to display</li>
+        {% endfor %}
 
 
-    <a href="/">Back</a>
+
 {% endblock %}

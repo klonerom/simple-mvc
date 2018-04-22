@@ -53,29 +53,37 @@ class ItemController extends AbstractController
     {
         $message = null;
 
+        //item information
         $itemManager = new ItemManager();
         $item = $itemManager->selectOneById($id);
-        if (isset($_POST['submitDelete'])) {//Delete case
+
+        //ITEM : Delete case
+        if (isset($_POST['submitDelete'])) {
             if (isset($_POST['itemId'])) {
 
                 $id = (int) $_POST['itemId']; //int to delete method
 
                 if ($id === $item->getId()) {
 
-                    $this->delete($item->getId());
+                    //$itemManager = new ItemManager();
+                    $itemManager->delete($item->getId());
+
+                    $_SESSION['message'] = 'Suppression de l\'item ' . $item->getTitle() . ' !';
+                    header('Location: /');
+                    die;
 
                 } else {
                     $message = 'La suppression n\'est pas possible : incohérence d\'id !';
                 }
             }
-
         }
 
-        if (isset($_POST['submitComment'])) {//add comment
-            $datas = [];
+        //COMMENT : add case
+        if (isset($_POST['submitComment'])) {
+            //$datas = [];
 
-            //eAdd comment in db
-            if (isset($_POST['author']) && isset($_POST['comment'])) {
+            //Add comment in db
+            if (!empty($_POST['author']) && !empty($_POST['comment'])) {
                 $dateNow = new \DateTime();
                 $createdAt = $dateNow->format('Y-m-d H:i:s');
 
@@ -86,23 +94,79 @@ class ItemController extends AbstractController
                     'createdAt' => $createdAt,
                 ];
 
-                $CommentManager = new CommentManager();
-                $CommentManager->insert($datas);
+                $commentManager = new CommentManager();
+                $commentManager->insert($datas);
 
-                $_SESSION['message'] = 'Création du commentaire de' . $datas['author'] . ' !';
-                header('Location: /item/' . $id);
-                die;
+                $message = 'Commentaire de ' . $datas['author'] . ' ajouté !';
+
+            } else {
+                $message = 'Merci de saisir un auteur et un commentaire !';
             }
         }
 
-        //List comment
+        //COMMENT : display comment for update case
+        if (!empty($_GET['IdCommentToUpdate'])) {
+            $commentIdUpd = (int) $_GET['IdCommentToUpdate'];
+
+            $commentManager = new CommentManager();
+            $commentUpd = $commentManager->selectOneById($commentIdUpd);
+        } else {
+            $commentUpd = [];
+        }
+
+        //COMMENT : Update case
+        if (isset($_POST['submitCommentUpdate'])) {
+
+            $commentId = (int) $_POST['commentId'];
+            $dateNow = new \DateTime();
+            $updatedAt = $dateNow->format('Y-m-d H:i:s');
+
+            $datas = [
+                'commentId' => $commentId,
+                'itemId' => $id,
+                'author' => $_POST['author'],
+                'comment' => $_POST['comment'],
+                'createdAt' => $_POST['createdAt'],
+                'updatedAt' => $updatedAt,
+            ];
+
+            $commentManager = new CommentManager();
+            $commentManager->update($commentId, $datas);
+
+            $_SESSION['message'] = ' Mise à jour du commentaire ' . $datas['author'] . ' le ' . $datas['updatedAt'] . ' !';
+            header('Location: /item/' . $id);
+            die;
+        }
+
+        //COMMENT : delete case
+        if (!empty($_GET['IdCommentToDelete'])) {
+
+            $commentId = (int) $_GET['IdCommentToDelete']; //int to delete method
+
+            $commentManager = new CommentManager();
+            $commentManager->delete($commentId);
+
+            $_SESSION['message'] = 'Suppression du commentaire d\'id : ' . $commentId . ' !';
+            header('Location: /item/' . $id);
+            die;
+        }
+
+        //COMMENT : Comment List
         $commentManager = new CommentManager();
         $comments = $commentManager->selectAllById($id);
+        //var_dump($comments);
+
+        //MESSAGE before header()
+        if (isset($_SESSION['message'])) {
+            $message = $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
 
         return $this->twig->render('Item/show.html.twig', [
             'item' => $item,
             'message' => $message,
             'comments' => $comments,
+            'commentUpd' => $commentUpd,
             ]);
     }
 

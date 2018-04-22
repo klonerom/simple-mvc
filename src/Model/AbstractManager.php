@@ -72,7 +72,7 @@ abstract class AbstractManager
     public function selectAllById(int $id)
     {
         // prepared request
-        $statement = $this->pdoConnection->prepare("SELECT * FROM $this->table WHERE item_id=:id");
+        $statement = $this->pdoConnection->prepare("SELECT * FROM $this->table WHERE item_id =:id");
         $statement->setFetchMode(\PDO::FETCH_CLASS, $this->className);
         $statement->bindValue('id', $id, \PDO::PARAM_INT);
         $statement->execute();
@@ -81,14 +81,14 @@ abstract class AbstractManager
     }
 
     /**
-     * DELETE on row in dataase by ID
+     * DELETE on row in database by ID
      *
      * @param int $id
      */
     public function delete(int $id)
     {
        if(isset($id)) {
-           $statement = $this->pdoConnection->prepare("DELETE FROM item WHERE id=:id");
+           $statement = $this->pdoConnection->prepare("DELETE FROM $this->table WHERE id=:id");
            $statement->bindValue('id', $id, \PDO::PARAM_INT);
            $statement->execute();
        }
@@ -107,13 +107,15 @@ abstract class AbstractManager
             $statement->bindValue('title', $data['title'], \PDO::PARAM_STR);
             $statement->execute();
         }
+
         if (isset($data['comment'])) {
             //echo "INSERT INTO $this->table (item_id, author, comment, created_at) VALUES (".$data['itemId'].", ".$data['author'].", ".$data['comment'].", ".$data['createdAt'].")";
-            $statement = $this->pdoConnection->prepare("INSERT INTO $this->table (item_id, author, comment, created_at) VALUES (:item_id, :author, :comment, :created_at)");
+            $statement = $this->pdoConnection->prepare("INSERT INTO $this->table (item_id, author, comment, created_at, updated_at) VALUES (:item_id, :author, :comment, :created_at, :updated_at)");
             $statement->bindValue('item_id', $data['itemId'], \PDO::PARAM_INT);
             $statement->bindValue('author', $data['author'], \PDO::PARAM_STR);
             $statement->bindValue('comment', $data['comment'], \PDO::PARAM_STR);
             $statement->bindValue('created_at', $data['createdAt'], \PDO::PARAM_STR);
+            $statement->bindValue('updated_at', $data['createdAt'], \PDO::PARAM_STR);
             $statement->execute();
         }
     }
@@ -125,10 +127,24 @@ abstract class AbstractManager
      */
     public function update(int $id, array $data)
     {
-        //echo 'UPDATE ' . $this->table . ' SET title = ' . $data['title'] . ' WHERE id = ' . $id;
-        $statement = $this->pdoConnection->prepare("UPDATE $this->table SET title = :title WHERE id = :id");
-        $statement->bindValue('id', $id, \PDO::PARAM_INT);
-        $statement->bindValue('title', $data['title'], \PDO::PARAM_STR);
-        $statement->execute();
+        if (isset($data['title'])) {
+            //echo 'UPDATE ' . $this->table . ' SET title = ' . $data['title'] . ' WHERE id = ' . $id;
+            $statement = $this->pdoConnection->prepare("UPDATE $this->table SET title = :title WHERE id = :id");
+            $statement->bindValue('id', $id, \PDO::PARAM_INT);
+            $statement->bindValue('title', $data['title'], \PDO::PARAM_STR);
+            $statement->execute();
+        }
+
+        if (isset($data['comment'])) {
+            $statement = $this->pdoConnection->prepare("UPDATE $this->table SET item_id =:item_id, author =:author, comment =:comment, created_at =:created_at, updated_at =:updated_at WHERE id =:id");
+            $statement->bindValue('id', $data['commentId'], \PDO::PARAM_INT);
+            $statement->bindValue('item_id', $data['itemId'], \PDO::PARAM_INT);
+            $statement->bindValue('author', $data['author'], \PDO::PARAM_STR);
+            $statement->bindValue('comment', $data['comment'], \PDO::PARAM_STR);
+            $statement->bindValue('created_at', $data['createdAt'], \PDO::PARAM_STR);
+            $statement->bindValue('updated_at', $data['updatedAt'], \PDO::PARAM_STR);
+            $statement->execute();
+        }
+
     }
 }
