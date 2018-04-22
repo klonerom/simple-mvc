@@ -1,4 +1,5 @@
 <form method="post">
-    <input type="text" name="title">
+    <input type="text" name="title" value="{{ item.title }}">
+    <input type="hidden" name="id" value="{{ item.id }}">
     <input type="submit" value="Valider">
 </form>

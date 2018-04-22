@@ -69,9 +69,12 @@ abstract class AbstractManager
      */
     public function delete(int $id)
     {
-        //TODO : Implements SQL DELETE request
+       if(isset($id)) {
+           $statement = $this->pdoConnection->prepare("DELETE FROM item WHERE id=:id");
+           $statement->bindValue('id', $id, \PDO::PARAM_INT);
+           $statement->execute();
+       }
     }
-
 
     /**
      * INSERT one row in dataase
@@ -81,7 +84,7 @@ abstract class AbstractManager
     public function insert(array $data)
     {
         if (isset($data['title'])) {
-            echo "INSERT INTO $this->table (title) VALUES (:title)";
+            //echo "INSERT INTO $this->table (title) VALUES (:title)";
             $statement = $this->pdoConnection->prepare("INSERT INTO $this->table (title) VALUES (:title)");
             $statement->bindValue('title', $data['title'], \PDO::PARAM_STR);
             $statement->execute();
@@ -95,6 +98,10 @@ abstract class AbstractManager
      */
     public function update(int $id, array $data)
     {
-        //TODO : Implements SQL UPDATE request
+        //echo 'UPDATE ' . $this->table . ' SET title = ' . $data['title'] . ' WHERE id = ' . $id;
+        $statement = $this->pdoConnection->prepare("UPDATE $this->table SET title = :title WHERE id = :id");
+        $statement->bindValue('id', $id, \PDO::PARAM_INT);
+        $statement->bindValue('title', $data['title'], \PDO::PARAM_STR);
+        $statement->execute();
     }
 }

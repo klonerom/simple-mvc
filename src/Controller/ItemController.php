@@ -27,6 +27,7 @@ class ItemController extends AbstractController
     public function index()
     {
         $message = null;
+
         if (isset($_SESSION['message'])) {
             $message = $_SESSION['message'];
             unset($_SESSION['message']);
@@ -49,10 +50,30 @@ class ItemController extends AbstractController
      */
     public function show(int $id)
     {
+        $message = null;
+
         $itemManager = new ItemManager();
         $item = $itemManager->selectOneById($id);
 
-        return $this->twig->render('Item/show.html.twig', ['item' => $item]);
+        if (isset($_POST)) {//Delete case
+            if (isset($_POST['itemId'])) {
+
+                $id = (int) $_POST['itemId']; //int to delete method
+
+                if ($id === $item->getId()) {
+
+                    $this->delete($item->getId());
+
+                } else {
+                    $message = 'La suppression n\'est pas possible : incohérence d\'id !';
+                }
+            }
+        }
+
+        return $this->twig->render('Item/show.html.twig', [
+            'item' => $item,
+            'message' => $message,
+            ]);
     }
 
     /**
@@ -64,8 +85,25 @@ class ItemController extends AbstractController
      */
     public function edit(int $id)
     {
-        // TODO : edit item with id $id
-        return $this->twig->render('Item/edit.html.twig', ['item', $id]);
+        $itemManager = new ItemManager();
+        $item = $itemManager->selectOneById($id);
+
+        $datas = [];
+
+        if (isset($_POST)) {
+            if (isset($_POST['title']) && $_POST['id']) {
+                $datas['title'] = $_POST['title'];
+
+                $itemManager = new ItemManager();
+                $itemManager->update($id, $datas);
+
+                $_SESSION['message'] = ' Mise à jour de l\'item ' . $datas['title'] . ' !';
+                header('Location: /');
+                die;
+            }
+        }
+
+        return $this->twig->render('Item/edit.html.twig', ['item' => $item]);
     }
 
     /**
@@ -83,7 +121,7 @@ class ItemController extends AbstractController
                 $itemManager = new ItemManager();
                 $itemManager->insert($datas);
 
-                $_SESSION['message'] = 'INSERTION de ' . $datas['title'] . ' Ok !';
+                $_SESSION['message'] = 'Création de l\'item ' . $datas['title'] . ' Ok !';
                 header('Location: /');
                 die;
             }
@@ -100,7 +138,15 @@ class ItemController extends AbstractController
      */
     public function delete(int $id)
     {
-        // TODO : delete the item with id $id
-        return $this->twig->render('Item/index.html.twig');
+        $itemManager = new ItemManager();
+        $item = $itemManager->selectOneById($id);//info sur item en cours de delete
+
+        $itemManager->delete($id); //delete
+
+        $_SESSION['message'] = 'Suppression de l\'item ' . $item->getTitle() .' !';
+
+        header('Location: /');
+        die;
+        //return $this->twig->render('Item/index.html.twig');
     }
 }

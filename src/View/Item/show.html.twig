@@ -2,7 +2,16 @@
 
 {% block content %}
     <h1>Item {{ item.title }}</h1>
+    {%  if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+
     <p>{{ item.id }}. {{ item.title }}</p>
     <a href="/item/edit/{{ item.id }}">Edit</a>
+    <form   action ="" method="POST">
+        <input type="hidden" name="itemId"  value="{{ item.id }}" >
+        <input type="hidden" name="itemTitle"  value="{{ item.title }}" >
+        <button type="submit" value="delete">Delete</button>
+    </form>
     <a href="/">Back</a>
 {% endblock %}
