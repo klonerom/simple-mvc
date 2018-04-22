@@ -80,7 +80,12 @@ abstract class AbstractManager
      */
     public function insert(array $data)
     {
-        //TODO : Implements SQL INSERT request
+        if (isset($data['title'])) {
+            echo "INSERT INTO $this->table (title) VALUES (:title)";
+            $statement = $this->pdoConnection->prepare("INSERT INTO $this->table (title) VALUES (:title)");
+            $statement->bindValue('title', $data['title'], \PDO::PARAM_STR);
+            $statement->execute();
+        }
     }
 
 

@@ -26,10 +26,18 @@ class ItemController extends AbstractController
      */
     public function index()
     {
+        $message = null;
+        if (isset($_SESSION['message'])) {
+            $message = $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
         $itemManager = new ItemManager();
         $items = $itemManager->selectAll();
 
-        return $this->twig->render('Item/index.html.twig', ['items' => $items]);
+        return $this->twig->render('Item/index.html.twig', [
+            'items' => $items,
+            'message' => $message,
+        ]);
     }
 
     /**
@@ -67,8 +75,19 @@ class ItemController extends AbstractController
      */
     public function add()
     {
-        // TODO : add a new item
-        return $this->twig->render('Item/add.html.twig');
+        $datas = [];
+
+        if (isset($_POST)) {
+            if (isset($_POST['title'])) {
+                $datas['title'] = $_POST['title'];
+                $itemManager = new ItemManager();
+                $itemManager->insert($datas);
+
+                $_SESSION['message'] = 'INSERTION de ' . $datas['title'] . ' Ok !';
+                header('Location: /');
+                die;
+            }
+        }
     }
 
     /**

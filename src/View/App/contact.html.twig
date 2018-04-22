@@ -2,13 +2,6 @@
 
 {% block content %}
     <h1>Items</h1>
-
-    <a href="/item/add">Add item</a>
-
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
-
     <ul>
         {% for item in items %}
             <li><a href="/item/{{ item.id }}">{{ item.id }}. {{ item.title }}</a></li>
