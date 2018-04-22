@@ -88,6 +88,7 @@ class ItemController extends AbstractController
                 die;
             }
         }
+        return $this->twig->render('Item/add.html.twig');
     }
 
     /**
