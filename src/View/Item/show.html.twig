@@ -9,8 +9,8 @@
     <p>{{ item.id }}. {{ item.title }}</p>
     <a href="/item/edit/{{ item.id }}">Edit</a>
     <form action ="" method="POST">
-        <input type="hidden" name="itemId"  value="{{ item.id }}" >
-        <input type="hidden" name="itemTitle"  value="{{ item.title }}" >
+        <input type="hidden" name="itemId"  value="{% if item.id %}{{ item.id }}{% endif %}" >
+        <input type="hidden" name="itemTitle"  value="{% if item.title %}{{ item.title }}{% endif %}" >
         <button type="submit" name="submitDelete">Delete</button>
     </form>
     <a href="/">Back</a>
@@ -21,9 +21,9 @@
         <label for="author">Auteur</label>
         <input type="text" name="author" id="author" value="{{ commentUpd.author }}"><br />
         <label for="comment">Commentaire</label>
-        <textarea type="text" name="comment" rows="5" id="comment">{{ commentUpd.comment }}</textarea><br />
-        <input type="hidden" name="commentId" id="commentId" value="{{ commentUpd.id }}"><br />
-        <input type="hidden" name="createdAt" id="createdAt" value="{{ commentUpd.createdAt }}"><br />
+        <textarea type="text" name="comment" rows="5" id="comment">{% if commentUpd.comment %}{{ commentUpd.comment }}{% endif %}</textarea><br />
+        <input type="hidden" name="commentId" id="commentId" value="{% if commentUpd.id %}{{ commentUpd.id }}{% endif %}"><br />
+        <input type="hidden" name="createdAt" id="createdAt" value="{% if commentUpd.createdAt %}{{ commentUpd.createdAt }}{% endif %}"><br />
 
         {% if commentUpd.id %}
             <button type="submit" name="submitCommentUpdate">Modifier</button>
