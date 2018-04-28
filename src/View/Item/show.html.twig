@@ -35,7 +35,7 @@
     <h3>Comments list</h3>
         {% for comment in comments %}
             <li>
-                id : {{ comment.id }} - Author : {{ comment.author }} - Created at : {{ comment.createdAtFormat }} - Updated at : {{ comment.updatedAtFormat }} - Comment : {{ comment.comment }}
+                id : {{ comment.id }} - Author : {{ comment.author }} - Created at : {{ comment.createdAt|date("d/m/Y H:i") }} - Updated at : {{ comment.updatedAt|date("d/m/Y H:i") }} - Comment : {{ comment.comment }}
                 <a href="/item/{{ item.id }}?IdCommentToUpdate={{ comment.id }}" >Modifier</a>
                 <a href="/item/{{ item.id }}?IdCommentToDelete={{ comment.id }}" >Supprimer</a>
             </li>

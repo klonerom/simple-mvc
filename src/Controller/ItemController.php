@@ -64,11 +64,7 @@ class ItemController extends AbstractController
                 $id = (int) $_POST['itemId']; //int to delete method
 
                 if ($id === $item->getId()) {
-                    //delete : appel de la fonction de cette class
-                    $this->delete($item->getId());
-
-                    $_SESSION['message'] = 'Suppression de l\'item ' . $item->getTitle() . ' !';
-                    header('Location: /');
+                    header('Location: /item/delete/'.$id);
                     die;
 
                 } else {

@@ -25,15 +25,7 @@ class Comment
 
     private $updated_at;
 
-    private $createdAtFormat;
 
-    private $updatedAtFormat;
-
-    public function __construct()
-    {
-          $this->setCreatedAtFormat($this->setDateFormat($this->getCreatedAt())); //transformation de la date récupérée en base
-          $this->setUpdatedAtFormat($this->setDateFormat($this->getUpdatedAt())); //transformation de la date récupérée en base
-    }
 
     /**
      * @return mixed
@@ -88,7 +80,7 @@ class Comment
      */
     public function getCreatedAt()
     {
-        return $this->created_at;//created_at et non createdAt car champ doit etre le reflet de la base
+        return new \DateTime($this->created_at);//created_at an date Object  which will be formated in twig
     }
 
     /**
@@ -104,7 +96,7 @@ class Comment
      */
     public function getUpdatedAt()
     {
-        return $this->updated_at;
+        return new \DateTime($this->updated_at); //updated_at an date Object  which will be formated in twig
     }
 
     /**
@@ -115,46 +107,5 @@ class Comment
         $this->updated_at = $updated_at;
     }
 
-    public function getCreatedAtFormat()
-    {
-        return $this->createdAtFormat;
-    }
 
-    /**
-     * @param mixed $createdAtFormat
-     */
-    public function setCreatedAtFormat($createdAtFormat)
-    {
-        $this->createdAtFormat = $createdAtFormat;
-    }
-
-    public function getUpdatedAtFormat()
-    {
-        return $this->updatedAtFormat;
-    }
-
-    /**
-     * @param mixed $updatedAtFormat
-     */
-    public function setUpdatedAtFormat($updatedAtFormat)
-    {
-        $this->updatedAtFormat = $updatedAtFormat;
-    }
-
-
-    /**
-     * @param $dateToFormat
-     *
-     */
-    public function setDateFormat($dateToFormat)
-    {
-        $attr = null;
-
-        if (isset($dateToFormat)) { //$dateToFormat NULL = date du jour
-            $dateFormat = new \DateTime($dateToFormat);
-            $attr = $dateFormat->format('d/m/Y H:i');
-        }
-
-        return $attr;
-    }
 }

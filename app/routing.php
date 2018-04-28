@@ -15,6 +15,7 @@ $routes = [
         ['add', '/item/add', ['GET', 'POST']], // action, url, method, GET ou POST (voir doc fastrout utilisée dans le disptacher : le GET permet d'afficher la page (donc obligatoire) et le POST de récupérer les élement du formulaire de la page add
         ['edit', '/item/edit/{id:\d+}', ['GET', 'POST']], // action, url, method
         ['show', '/item/{id:\d+}', ['GET', 'POST']], // action, url, method
+        ['delete', '/item/delete/{id:\d+}', ['GET', 'POST']], // action, url, method
     ],
     'App' => [
         ['contact', '/contact', 'GET'],
